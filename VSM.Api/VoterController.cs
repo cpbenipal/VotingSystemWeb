@@ -27,7 +27,7 @@ namespace VSM.Api
                 var result = await _repository.GetVoters();
                 _logger.LogInfo("GetVoters");
 
-                return Content(result, contentType: "application/json");
+                return Ok(result);
             }
             catch (Exception ex)
             {

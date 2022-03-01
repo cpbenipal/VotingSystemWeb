@@ -25,7 +25,7 @@ namespace VSM.Api
                 var result = await _repository.GetCandidates(CandidateId);
                 _logger.LogInfo("GetCandidates");
 
-                return Content(result, contentType: "application/json");
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -41,7 +41,7 @@ namespace VSM.Api
                 var result = await _repository.CandidateVotes(CandidateId);
                 _logger.LogInfo("GetCandidateVotes");                
 
-                return Content(result, contentType: "application/json");
+                return Ok(result);
             }
             catch (Exception ex)
             {

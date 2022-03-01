@@ -25,7 +25,7 @@ namespace VSM.Api
             {
                 var result = await _repository.GetCategories(GetCategoryId);
                 _logger.LogInfo("GetCategories");
-                return Content(result, contentType: "application/json");
+                return Ok(result);
             }
             catch (Exception ex)
             {

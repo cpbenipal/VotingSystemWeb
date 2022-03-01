@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nest;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VSM.LoggerService.Contracts;
@@ -11,30 +12,44 @@ namespace VSM.Repositories
     {
         private readonly ILoggerManager _logger;
         private readonly EfDbOperationsRepository _dbOperations;
+        private readonly ElasticClient _client;
 
-        public EfCoreCategoryRepository(ILoggerManager logger, EfDbOperationsRepository dbOperations)
+
+        public EfCoreCategoryRepository(ILoggerManager logger, EfDbOperationsRepository dbOperations,ElasticClient client)
         {
             _logger = logger;
             _dbOperations = dbOperations;
+            _client = client;
         }
 
-        public async Task<string> GetCategories(int CategoryId = 0)  
+        public async Task<AddCategoryViewModel> GetCategories(int CategoryId = 0)
         {
             List<SqlParameterModel> param = new List<SqlParameterModel>()
              {
               new SqlParameterModel(){ Name = "CategoryId", Value = CategoryId},
              };
+            ISearchResponse<AddCategoryViewModel> results;
+            results = await _client.SearchAsync<AddCategoryViewModel>(s => s
+            .Index("Category")
+       .Query(q => q
+           .MatchAll()
+       ));
 
-            return await _dbOperations.ExecuteDataSetAsync("spGetCategories", param);
+            return (AddCategoryViewModel)results;
+
+            //return await _dbOperations.ExecuteDataSetAsync("spGetCategories", param);
         }
-        
+
         public async Task<bool> AddCategory(AddCategoryViewModel model)
-        {              
+        {
             List<SqlParameterModel> param = new List<SqlParameterModel>()
              {
-               new SqlParameterModel(){ Name = "CategoryName", Value = model.CategoryName}  
+               new SqlParameterModel(){ Name = "CategoryName", Value = model.CategoryName}
              };
-            return Convert.ToBoolean(await _dbOperations.ExecuteDataSetAsync("spAddCategory", param));
+            int id= Convert.ToInt32(await _dbOperations.ExecuteDataSetAsync("spAddCategory", param));
+            model.CategoryId = id;
+            var res = await _client.IndexAsync<AddCategoryViewModel>(model, x => x.Index("Category"));
+            return true;
 
         }
     }

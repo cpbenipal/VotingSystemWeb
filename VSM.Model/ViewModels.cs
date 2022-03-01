@@ -10,10 +10,12 @@ namespace VSM.Model
 {
     public class CandidateViewModel
     {
+        public int CandidateId { get; set; }
         public string CandidateName { get; set; }  
     }
     public class VoteViewModel
     {
+        public int VoteId { get; set; }
         public int VoterId { get; set; }
         public int CandidateId { get; set; }
     }
@@ -24,10 +26,12 @@ namespace VSM.Model
     }
     public class AddCategoryViewModel
     {
+        public int CategoryId { get; set; }
         public string CategoryName { get; set; }
     }
     public class AddVoterViewModel
     {
+        public int VoterId { get; set; } 
         public string VoterName { get; set; } 
         public int Age { get; set; }
     }
